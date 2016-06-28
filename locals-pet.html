@@ -1,0 +1,203 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../locals-object/locals-object.html">
+<link rel="import" href="../locals-object/locals-dataobject.html">
+
+<!--
+An element providing a solution to no problem in particular.
+
+Example:
+
+    <locals-pet></locals-pet>
+
+Example:
+
+    <locals-pet>
+      <h2>Hello locals-pet</h2>
+    </locals-pet>
+
+@demo demo/index.html
+@hero hero.svg
+-->
+
+<dom-module id="locals-pet">
+  <template>
+   <locals-object on-internalstatechange="_fixdata" config="[[config]]" objectdata="[[objectdata]]" state="{{visualstate}}" on-state-changed="_visualstatechanged" renderstate="{{renderstate}}"></locals-object>
+   <locals-dataobject id="ldataobject" hashfunction="{{hashfunction}}" on-state-changed="_datastatechanged" objectdata="[[objectdata]]" state="{{datastate}}" config="[[dataconfig]]" renderstate="{{renderstate}}"></locals-dataobject>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'locals-pet',
+
+   properties: {
+        _version: {
+          type: String,
+          value: '0.0.1'
+        },
+        /* Configuration of the avatar's visual state.
+        can be set on initialisation - data is returned to this variable.
+        */
+        visualstate: {
+          type: Array,
+          notify: true,
+          value: [ [ 2, 0 ] ]
+        },
+        /* configuration of the object's data state.
+         can be set on initialisation - data is returned to this variable
+        */
+        datastate: {
+          type: Object,
+          notify: true,
+          value: {
+              "residence": "Mijn Huis",
+            }
+        },
+
+        renderstate: {
+          type: String          
+        },
+        objectdata: {
+          type: Object,
+
+        },
+        hashfunction: {
+          type: Function
+        }
+      },
+
+      _newblock: function(){
+       
+      },
+
+      _is: function(a, b) {
+        if (b === undefined){
+          b = true;
+        }
+        return a === b;
+      },
+
+
+      _fixdata: function(e){
+        // console.log('fix data',e.detail);
+
+        // console.log('color of body',e.detail[this.layerindex['body']][1]);
+        // console.log('color of head',e.detail[this.layerindex['head']][1]);
+
+        // copy head color to body color
+        // if (e.detail[this.layerindex['head']][1] != e.detail[this.layerindex['body']][1]){
+        //   e.detail[this.layerindex['head']][1] = e.detail[this.layerindex['body']][1];
+        //   this.visualstate = e.detail;
+        // }
+
+      },
+
+      // Element Lifecycle
+      ready: function() {
+
+        this.dataconfig = {
+          fields: [
+            {
+              name: "name",
+              type: "input",
+              label: "Petname"
+            }
+          ]
+        };
+
+        this.config = 
+{ layers: 
+   [ { name: 'pet',
+       icon: this.resolveUrl("./images/pet-icon.png"),
+       iconselected: this.resolveUrl("./images/pet-icon-selected.png"),
+       variants: [ 'cat' ],
+      colors: 
+              [ 'blue',
+                'darkblue',
+                'green',
+                'lightblue',
+                'purple',
+                'red',
+                'white',
+                'yellow' ],
+       images: 
+        { 'cat-blue': this.resolveUrl("./images/0-pet-pet-cat-blue.png"),
+          'cat-darkblue': this.resolveUrl("./images/0-pet-pet-cat-darkblue.png"),
+          'cat-lightblue': this.resolveUrl("./images/0-pet-pet-cat-lightblue.png"),
+          'cat-purple': this.resolveUrl("./images/0-pet-pet-cat-purple.png"),
+          'cat-green': this.resolveUrl("./images/0-pet-pet-cat-green.png"),
+          'cat-red': this.resolveUrl("./images/0-pet-pet-cat-red.png"),
+          'cat-yellow': this.resolveUrl("./images/0-pet-pet-cat-yellow.png") } } ],
+  defaultstate: [ [ 0, 0 ] ] }
+
+;
+
+  this.layerindex = {};
+
+    var self= this;
+      // make some layers invisible
+      this.config.layers = this.config.layers.map(function(layer,index){
+        self.layerindex[layer.name] = index;
+        // if (layer.name == 'head' || layer.name == 'facemale'){
+        //   layer.hidden = true;
+        // }
+        return layer;
+      });
+
+
+        if (!this.visualstate) {
+          // default state
+          this.visualstate = this.config.defaultstate;
+        }
+
+        if (!this.datastate) {
+          this.datastate = {
+              "name": "",
+          };
+        }
+
+
+      },
+
+      attached: function() {
+        //var user = document.querySelector('locals-user');
+        var self = this;
+        //debugger;
+        // if (this.renderstate !== 'dataview'){
+        //   user.addEventListener('newblock', function() {
+        //     var validations = self.$.ldataobject.getValidations();
+        //   });          
+        // }
+      },
+
+      detached: function() {
+        // The analog to `attached`, `detached` fires when the element has been
+        // removed from a document.
+        //
+        // Use this to clean up anything you did in `attached`.
+      },
+
+      _visualstatechanged: function(e) {
+        //console.log('Visual state changed');
+        this.fire('visual-state-changed',e.detail);
+      },
+
+      _datastatechanged: function(e) {
+        //console.log('Data state changed');
+        this.fire('data-state-changed',e.detail);
+      },
+
+
+    });
+  </script>
+</dom-module>
